@@ -1,10 +1,18 @@
+#ifdef __APPLE__
+	#define GL_SILENCE_DEPRECATION
+	#include <OpenGL/gl.h>
+	#include <GLUT/glut.h>
+#else
+	#include <GL/gl.h>
+	#include <GL/glut.h>
+#endif
+
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-#include <GL/glut.h>
 #include <stdio.h>
 
-// 2ŸŒ³ƒxƒNƒgƒ‹‚ğˆµ‚¤‚½‚ß‚ÌƒNƒ‰ƒX
+// 2ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ÌƒNï¿½ï¿½ï¿½X
 class Vector2d {
 public:
 	double x, y;
@@ -12,76 +20,76 @@ public:
 	Vector2d(double _x, double _y) { x = _x; y = _y; }
 	void set(double _x, double _y) { x = _x; y = _y; }
 
-	// ’·‚³‚ğ1‚É³‹K‰»‚·‚é
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½Éï¿½ï¿½Kï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void normalize() {
 		double len = length();
 		x /= len; y /= len;
 	}
 
-	// ’·‚³‚ğ•Ô‚·
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½
 	double length() { return sqrt(x * x + y * y); }
 
-	// s”{‚·‚é
+	// sï¿½{ï¿½ï¿½ï¿½ï¿½
 	void scale(const double s) { x *= s; y *= s; }
 
-	// ‰ÁZ‚Ì’è‹`
+	// ï¿½ï¿½ï¿½Zï¿½Ì’ï¿½`
 	Vector2d operator+(Vector2d v) { return Vector2d(x + v.x, y + v.y); }
 
-	// Œ¸Z‚Ì’è‹`
+	// ï¿½ï¿½ï¿½Zï¿½Ì’ï¿½`
 	Vector2d operator-(Vector2d v) { return Vector2d(x - v.x, y - v.y); }
 
-	// “àÏ‚Ì’è‹`
+	// ï¿½ï¿½ï¿½Ï‚Ì’ï¿½`
 	double operator*(Vector2d v) { return x * v.x + y* v.y; }
 
-	// ‘ã“ü‰‰Z‚Ì’è‹`
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½Ì’ï¿½`
 	Vector2d& operator=(const Vector2d& v){ x = v.x; y = v.y; return (*this); }
 
-	// ‰ÁZ‘ã“ü‚Ì’è‹`
+	// ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½Ì’ï¿½`
 	Vector2d& operator+=(const Vector2d& v) { x += v.x; y += v.y; return (*this); }
 
-	// Œ¸Z‘ã“ü‚Ì’è‹`
+	// ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½Ì’ï¿½`
 	Vector2d& operator-=(const Vector2d& v) { x -= v.x; y -= v.y; return (*this); }
 
-	// ’l‚ğo—Í‚·‚é
+	// ï¿½lï¿½ï¿½ï¿½oï¿½Í‚ï¿½ï¿½ï¿½
 	void print() { printf("Vector2d(%f %f)\n", x, y); }
 };
 
-// ƒ}ƒCƒiƒX‚Ì•„†‚Ì•t‚¢‚½ƒxƒNƒgƒ‹‚ğˆµ‚¦‚é‚æ‚¤‚É‚·‚é‚½‚ß‚Ì’è‹` —áFb=(-a); ‚Ì‚æ‚¤‚É‹Lq‚Å‚«‚é
+// ï¿½}ï¿½Cï¿½iï¿½Xï¿½Ì•ï¿½ï¿½ï¿½ï¿½Ì•tï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½é‚½ï¿½ß‚Ì’ï¿½` ï¿½ï¿½Fb=(-a); ï¿½Ì‚æ‚¤ï¿½É‹Lï¿½qï¿½Å‚ï¿½ï¿½ï¿½
 Vector2d operator-( const Vector2d& v ) { return( Vector2d( -v.x, -v.y ) ); }
 
-// ƒxƒNƒgƒ‹‚ÆÀ”‚ÌÏ‚ğˆµ‚¦‚é‚æ‚¤‚É‚·‚é‚½‚ß‚Ì’è‹` —áF c=5*a+2*b; c=b*3; ‚Ì‚æ‚¤‚É‹Lq‚Å‚«‚é
+// ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½ÌÏ‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½é‚½ï¿½ß‚Ì’ï¿½` ï¿½ï¿½F c=5*a+2*b; c=b*3; ï¿½Ì‚æ‚¤ï¿½É‹Lï¿½qï¿½Å‚ï¿½ï¿½ï¿½
 Vector2d operator*( const double& k, const Vector2d& v ) { return( Vector2d( k*v.x, k*v.y ) );}
 Vector2d operator*( const Vector2d& v, const double& k ) { return( Vector2d( v.x*k, v.y*k ) );}
 
-// ƒxƒNƒgƒ‹‚ğÀ”‚ÅŠ„‚é‘€ì‚ğˆµ‚¦‚é‚æ‚¤‚É‚·‚é‚½‚ß‚Ì’è‹` —áF c=a/2.3; ‚Ì‚æ‚¤‚É‹Lq‚Å‚«‚é
+// ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅŠï¿½ï¿½é‘€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½é‚½ï¿½ß‚Ì’ï¿½` ï¿½ï¿½F c=a/2.3; ï¿½Ì‚æ‚¤ï¿½É‹Lï¿½qï¿½Å‚ï¿½ï¿½ï¿½
 Vector2d operator/( const Vector2d& v, const double& k ) { return( Vector2d( v.x/k, v.y/k ) );}
 
 // ================================================================================================
 
 
-std::vector<Vector2d> g_ControlPoints; // §Œä“_‚ğŠi”[‚·‚é
+std::vector<Vector2d> g_ControlPoints; // ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½
 
-// ƒmƒbƒgƒxƒNƒgƒ‹‚Ì—v‘f” iQl‘‚É‚ ‚í‚¹‚ÄA—v‘f”‚Í10‚Æ‚µ‚Ä‚¢‚éj
+// ï¿½mï¿½bï¿½gï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½Ì—vï¿½fï¿½ï¿½ ï¿½iï¿½Qï¿½lï¿½ï¿½ï¿½É‚ï¿½ï¿½í‚¹ï¿½ÄAï¿½vï¿½fï¿½ï¿½ï¿½ï¿½10ï¿½Æ‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½j
 const int NUM_NOT = 10;
 
-// ƒmƒbƒgƒxƒNƒgƒ‹
-// ‚±‚Ì”z—ñ‚Ì’l‚ğ•ÏX‚·‚é‚±‚Æ‚ÅŠî’êŠÖ”‚ª•Ï‰»‚·‚éB‚»‚ÌŒ‹‰Ê‚Æ‚µ‚ÄŒ`‚ª•Ï‚í‚éB
-// ‰º‚Ì—á‚Å‚ÍAˆê’èŠÔŠu‚Å’l‚ª•Ï‰»‚·‚é‚Ì‚ÅAuˆê—lBƒXƒvƒ‰ƒCƒ“‹Èüv‚Æ‚È‚é
+// ï¿½mï¿½bï¿½gï¿½xï¿½Nï¿½gï¿½ï¿½
+// ï¿½ï¿½ï¿½Ì”zï¿½ï¿½Ì’lï¿½ï¿½ÏXï¿½ï¿½ï¿½é‚±ï¿½Æ‚ÅŠï¿½ï¿½Öï¿½ï¿½ï¿½ï¿½Ï‰ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½ÌŒï¿½ï¿½Ê‚Æ‚ï¿½ï¿½ÄŒ`ï¿½ï¿½ï¿½Ï‚ï¿½ï¿½B
+// ï¿½ï¿½ï¿½Ì—ï¿½Å‚ÍAï¿½ï¿½ï¿½ÔŠuï¿½Å’lï¿½ï¿½ï¿½Ï‰ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ÅAï¿½uï¿½ï¿½lBï¿½Xï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Èï¿½ï¿½vï¿½Æ‚È‚ï¿½
 double g_NotVector[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 
-// Šî’êŠÖ” N{i,n}(t)‚Ì’l‚ğŒvZ‚·‚é
+// ï¿½ï¿½ï¿½Öï¿½ N{i,n}(t)ï¿½Ì’lï¿½ï¿½ï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½
 double getBaseN(int i, int n, double t) {
 	if( n == 0 ) {
-		// n ‚ª 0 ‚Ì‚¾‚¯ t ‚Ì’l‚É‰‚¶‚Ä 0 ‚Ü‚½‚Í 1 ‚ğ•Ô‚·
+		// n ï¿½ï¿½ 0 ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½ t ï¿½Ì’lï¿½É‰ï¿½ï¿½ï¿½ï¿½ï¿½ 0 ï¿½Ü‚ï¿½ï¿½ï¿½ 1 ï¿½ï¿½Ô‚ï¿½
 		if( t >= g_NotVector[i] && t < g_NotVector[i+1] ) {
 			return 1.0;
 		}
 		return 0;
 	} else {
-		// š‚±‚±‚É•K—v‚ÈƒvƒƒOƒ‰ƒ€ƒR[ƒh‚ğ‹Lq‚·‚é
-		// šÄ‹Ai©•ª©g‚ÌŠÖ” getBaseN ‚ğŒÄ‚Ôˆ—‚ª•K—vj
-		// šŒW”‚ğŒvZ‚·‚é‚Æ‚«‚ÉAƒmƒbƒg‚ªd‚È‚éi•ª•ê‚ªƒ[ƒ‚Æ‚È‚éj‚Æ‚«‚É‚ÍA‚»‚Ì€‚ğ–³‹‚·‚éB
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É•Kï¿½vï¿½Èƒvï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½hï¿½ï¿½ï¿½Lï¿½qï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½Ä‹Aï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½gï¿½ÌŠÖï¿½ getBaseN ï¿½ï¿½ï¿½Ä‚Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Kï¿½vï¿½j
+		// ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Zï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½ÉAï¿½mï¿½bï¿½gï¿½ï¿½ï¿½dï¿½È‚ï¿½iï¿½ï¿½ï¿½ê‚ªï¿½[ï¿½ï¿½ï¿½Æ‚È‚ï¿½jï¿½Æ‚ï¿½ï¿½É‚ÍAï¿½ï¿½ï¿½Ìï¿½ï¿½ğ–³ï¿½ï¿½ï¿½ï¿½ï¿½B
 		double a = (t - g_NotVector[i]) / (g_NotVector[i+n] - g_NotVector[i]);
         double b = (g_NotVector[i+n+1] - t) / (g_NotVector[i+n+1] - g_NotVector[i+1]);
 
@@ -89,12 +97,12 @@ double getBaseN(int i, int n, double t) {
 	}
 }
 
-// •\¦•”•ª‚ğ‚±‚ÌŠÖ”‚Å‹L“ü
+// ï¿½\ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½Å‹Lï¿½ï¿½
 void display(void) {
-	glClearColor (1.0, 1.0, 1.0, 1.0);  // Á‹Fw’è
-	glClear (GL_COLOR_BUFFER_BIT );     // ‰æ–ÊÁ‹
+	glClearColor (1.0, 1.0, 1.0, 1.0);  // ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½wï¿½ï¿½
+	glClear (GL_COLOR_BUFFER_BIT );     // ï¿½ï¿½Êï¿½ï¿½ï¿½
 
-	// §Œä“_‚Ì•`‰æ
+	// ï¿½ï¿½ï¿½ï¿½_ï¿½Ì•`ï¿½ï¿½
 	glPointSize(5);
 	glColor3d(0.0, 0.0, 0.0);
 	glBegin(GL_POINTS);
@@ -103,7 +111,7 @@ void display(void) {
 	}
 	glEnd();
 
-	// §Œä“_‚ğŒ‹‚Ôü•ª‚Ì•`‰æ
+	// ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½Ôï¿½ï¿½ï¿½ï¿½Ì•`ï¿½ï¿½
 	glColor3d(1.0, 0.0, 0.0);
 	glLineWidth(1);
 	glBegin(GL_LINE_STRIP);
@@ -112,9 +120,9 @@ void display(void) {
 	}
 	glEnd();
 
-	// š ‚±‚±‚ÉBƒXƒvƒ‰ƒCƒ“‹Èü‚ğ•`‰æ‚·‚éƒvƒƒOƒ‰ƒ€ƒR[ƒh‚ğ“ü‚ê‚é
-	// ƒqƒ“ƒg1: 3ŸBƒXƒvƒ‰ƒCƒ“‚Ìê‡‚Í§Œä“_‚ğ4‚Â“ü‚ê‚é‚Ü‚Å‚Í‰½‚à•`‚¯‚È‚¢
-	// ƒqƒ“ƒg2: ƒpƒ‰ƒ[ƒ^t‚Ì’l‚Ìæ‚è“¾‚é”ÍˆÍ‚É’ˆÓ
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½Xï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Èï¿½ï¿½ï¿½`ï¿½æ‚·ï¿½ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½[ï¿½hï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½qï¿½ï¿½ï¿½g1: 3ï¿½ï¿½Bï¿½Xï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Ìê‡ï¿½Íï¿½ï¿½ï¿½_ï¿½ï¿½4ï¿½Â“ï¿½ï¿½ï¿½ï¿½Ü‚Å‚Í‰ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½ï¿½È‚ï¿½
+	// ï¿½qï¿½ï¿½ï¿½g2: ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^tï¿½Ì’lï¿½Ìï¿½è“¾ï¿½ï¿½ÍˆÍ‚É’ï¿½ï¿½ï¿½
 	if(g_ControlPoints.size() > 3){
 		glColor3d(0.0, 0.0, 1.0);
 		glLineWidth(2);
@@ -139,34 +147,34 @@ void resizeWindow(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	// ƒEƒBƒ“ƒhƒE“à‚ÌÀ•WŒnİ’è
-	// ƒ}ƒEƒXƒNƒŠƒbƒN‚ÌÀ•W‚Æ•`‰æÀ•W‚ªˆê’v‚·‚é‚æ‚¤‚È³“Š‰e
+	// ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½ï¿½Ìï¿½ï¿½Wï¿½nï¿½İ’ï¿½
+	// ï¿½}ï¿½Eï¿½Xï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½Ìï¿½ï¿½Wï¿½Æ•`ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½Èï¿½ï¿½ï¿½ï¿½e
 	glOrtho(0, w, h, 0, -10, 10);
 
 	glMatrixMode(GL_MODELVIEW);
 }
 
-// ƒL[ƒ{[ƒhƒCƒxƒ“ƒgˆ—
+// ï¿½Lï¿½[ï¿½{ï¿½[ï¿½hï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
 void keyboard(unsigned char key, int x, int y) {
 	switch (key) {
 	case 'q':
 	case 'Q':
 	case '\033':
-		exit(0);  /* '\033' ‚Í ESC ‚Ì ASCII ƒR[ƒh */
+		exit(0);  /* '\033' ï¿½ï¿½ ESC ï¿½ï¿½ ASCII ï¿½Rï¿½[ï¿½h */
 	default:
 		break;
 	}
 	glutPostRedisplay();
 }
 
-// ƒ}ƒEƒXƒCƒxƒ“ƒgˆ—
+// ï¿½}ï¿½Eï¿½Xï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½
 void mouse(int button, int state, int x, int y) {
 	if(state == GLUT_DOWN) {
 		switch (button) {
 		case GLUT_LEFT_BUTTON:
-			// ƒNƒŠƒbƒN‚µ‚½ˆÊ’u‚É§Œä“_‚ğ’Ç‰Á
-			// ƒmƒbƒg”‚ğ‘‚â‚¹‚Î‚¢‚­‚ç‚Å‚à§Œä“_‚ğ’Ç‰Á‚Å‚«‚é‚ªA¡‰ñ‚ÍNUM_NOT‚Ì’l‚ÅŒÅ’è‚³‚ê‚Ä‚¢‚é‚Ì‚Å
-			// ‚¢‚­‚ç‚Å‚à’Ç‰Á‚Å‚«‚é‚í‚¯‚Å‚Í‚È‚¢
+			// ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½Éï¿½ï¿½ï¿½_ï¿½ï¿½Ç‰ï¿½
+			// ï¿½mï¿½bï¿½gï¿½ï¿½ï¿½ğ‘‚â‚¹ï¿½Î‚ï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½Ç‰ï¿½ï¿½Å‚ï¿½ï¿½é‚ªï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½NUM_NOTï¿½Ì’lï¿½ÅŒÅ’è‚³ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ì‚ï¿½
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½Ç‰ï¿½ï¿½Å‚ï¿½ï¿½ï¿½í‚¯ï¿½Å‚Í‚È‚ï¿½
 			if(g_ControlPoints.size() < NUM_NOT - 4) {
 				g_ControlPoints.push_back(Vector2d(x, y));
 			}
@@ -174,7 +182,7 @@ void mouse(int button, int state, int x, int y) {
 		case GLUT_MIDDLE_BUTTON:
 		break;
 		case GLUT_RIGHT_BUTTON:
-			// ––”ö‚Ì§Œä“_‚Ìíœ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½_ï¿½Ìíœ
 			if(!g_ControlPoints.empty()) {
 				g_ControlPoints.pop_back();
 			}
@@ -182,20 +190,20 @@ void mouse(int button, int state, int x, int y) {
 		default:
 		break;
 		}
-		glutPostRedisplay(); // Ä•`‰æ
+		glutPostRedisplay(); // ï¿½Ä•`ï¿½ï¿½
 	}
 }
 
-// ƒƒCƒ“ƒvƒƒOƒ‰ƒ€
+// ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½
 int main (int argc, char *argv[]) {
-	glutInit(&argc, argv);          // ƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»
-	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE); // •`‰æƒ‚[ƒh‚Ìw’è
-	glutInitWindowSize(800 , 800);  // ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğw’è
-	glutCreateWindow(argv[0]);      // ƒEƒBƒ“ƒhƒE‚ğì¬
-	glutDisplayFunc(display);       // •\¦ŠÖ”‚ğw’è
-	glutReshapeFunc(resizeWindow);  // ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ª•ÏX‚³‚ê‚½‚Æ‚«‚ÌŠÖ”‚ğw’è
-	glutKeyboardFunc(keyboard);     // ƒL[ƒ{[ƒhƒCƒxƒ“ƒgˆ—ŠÖ”‚ğw’è
-	glutMouseFunc(mouse);           // ƒ}ƒEƒXƒCƒxƒ“ƒgˆ—ŠÖ”‚ğw’è
-	glutMainLoop();                 // ƒCƒxƒ“ƒg‘Ò‚¿
+	glutInit(&argc, argv);          // ï¿½ï¿½ï¿½Cï¿½uï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
+	glutInitDisplayMode(GLUT_RGBA|GLUT_DOUBLE); // ï¿½`ï¿½æƒ‚ï¿½[ï¿½hï¿½Ìwï¿½ï¿½
+	glutInitWindowSize(800 , 800);  // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Tï¿½Cï¿½Yï¿½ï¿½ï¿½wï¿½ï¿½
+	glutCreateWindow(argv[0]);      // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½ï¿½ï¿½ì¬
+	glutDisplayFunc(display);       // ï¿½\ï¿½ï¿½ï¿½Öï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
+	glutReshapeFunc(resizeWindow);  // ï¿½Eï¿½Bï¿½ï¿½ï¿½hï¿½Eï¿½Tï¿½Cï¿½Yï¿½ï¿½ï¿½ÏXï¿½ï¿½ï¿½ê‚½ï¿½Æ‚ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
+	glutKeyboardFunc(keyboard);     // ï¿½Lï¿½[ï¿½{ï¿½[ï¿½hï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
+	glutMouseFunc(mouse);           // ï¿½}ï¿½Eï¿½Xï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Öï¿½ï¿½ï¿½ï¿½wï¿½ï¿½
+	glutMainLoop();                 // ï¿½Cï¿½xï¿½ï¿½ï¿½gï¿½Ò‚ï¿½
 	return 0;
 }
